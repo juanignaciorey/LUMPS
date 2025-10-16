@@ -139,6 +139,5 @@ Después de completar exitosamente la Fase 0, el sistema estará listo para:
 
 ## Referencias
 
-- [PRD del Proyecto](project_lumps_prd.md)
 - [ARC Prize](https://arcprize.org)
 - [Computational Irreducibility](https://writings.stephenwolfram.com/2021/11/the-concept-of-the-ruliad/)
