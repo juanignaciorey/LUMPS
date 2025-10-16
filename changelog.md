@@ -20,6 +20,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Documentación completa** en `docs/guias/google_colab_setup.md` con instrucciones paso a paso
 - **Notebook completamente automático** que funciona con "Run all" sin intervención manual
 - **Sistema plug-and-play** que crea carpetas, manifiestos y configura workers automáticamente
+- **Detección automática de carpetas compartidas** - el notebook detecta si existe carpeta compartida y se une automáticamente al trabajo coordinado
+- **Modo híbrido inteligente** - funciona tanto en modo coordinado (carpeta compartida) como independiente (carpeta local)
 - Sistema de logging persistente en `generate_dataset_high_performance.py`
 - Sistema de checkpoints para recuperación automática de generación de datasets
 - Funcionalidad de continuación desde último checkpoint
