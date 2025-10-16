@@ -1,0 +1,47 @@
+evolution:
+  grid_size: 12
+  population_size: 50
+  generations: 500
+  mutation_rate: 0.1
+  crossover_rate: 0.7
+  elite_size: 10
+  num_fitness_types: 16  # 5 originales + 11 nuevas
+  tasks_per_fitness: 50  # Reducido para probar las nuevas funciones
+  fitness_types:
+    - expand
+    - symmetry
+    - count
+    - topology
+    - replicate
+    - pattern_match
+    - transform_consistency
+    - compression
+    - analogy
+    - objectness
+    - rule_entropy
+    - invariance
+    - relational_distance
+    - causal_score
+    - divergence_penalty
+    - compositionality
+
+model:
+  d_model: 256
+  n_layers: 6
+  n_heads: 4
+  dropout: 0.1
+  max_grid_size: 20
+  num_states: 8
+
+training:
+  batch_size: 16
+  learning_rate: 2e-4
+  epochs: 30
+  num_candidates: 20
+  checkpoint_every: 5
+
+diagnostics:
+  eval_every: 5
+  ood_tasks: 500
+
+use_wandb: false

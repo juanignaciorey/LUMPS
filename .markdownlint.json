@@ -1,0 +1,52 @@
+{
+  "MD013": {
+    "line_length": 80,
+    "code_blocks": false,
+    "tables": false,
+    "html": false
+  },
+  "MD033": false,
+  "MD041": false,
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD029": {
+    "style": "ordered"
+  },
+  "MD007": {
+    "indent": 2
+  },
+  "MD012": {
+    "maximum": 1
+  },
+  "MD022": true,
+  "MD025": {
+    "front_matter_title": ""
+  },
+  "MD026": {
+    "punctuation": ".,;:!"
+  },
+  "MD030": {
+    "ul_single": 1,
+    "ol_single": 1,
+    "ul_multi": 1,
+    "ol_multi": 1
+  },
+  "MD031": true,
+  "MD032": true,
+  "MD034": false,
+  "MD036": false,
+  "MD040": true,
+  "MD046": {
+    "style": "fenced"
+  },
+  "MD048": {
+    "style": "backtick"
+  },
+  "MD049": {
+    "style": "asterisk"
+  },
+  "MD050": {
+    "style": "asterisk"
+  }
+}

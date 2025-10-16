@@ -1,0 +1,52 @@
+# Archivos a ignorar por Prettier
+
+# Archivos de datos grandes
+dataset_phase0/all_tasks.json
+dataset_phase0_new/all_tasks.json
+dataset_phase0/dataset_stats.json
+dataset_phase0_new/dataset_stats.json
+
+# Archivos de dependencias
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de build
+build/
+dist/
+*.egg-info/
+
+# Archivos de configuración del sistema
+.git/
+.vscode/
+.cursor/
+
+# Archivos de logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Archivos binarios
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+*.zip
+*.tar.gz
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Archivos de configuración específicos que no deben formatearse
+package-lock.json
+yarn.lock
