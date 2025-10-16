@@ -18,6 +18,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 - **Monitor de progreso en tiempo real** con dashboard CLI y alertas automáticas
 - **Sistema de recuperación automática** tras desconexiones de Colab con locks con timeout
 - **Documentación completa** en `docs/guias/google_colab_setup.md` con instrucciones paso a paso
+- **Notebook completamente automático** que funciona con "Run all" sin intervención manual
+- **Sistema plug-and-play** que crea carpetas, manifiestos y configura workers automáticamente
 - Sistema de logging persistente en `generate_dataset_high_performance.py`
 - Sistema de checkpoints para recuperación automática de generación de datasets
 - Funcionalidad de continuación desde último checkpoint
