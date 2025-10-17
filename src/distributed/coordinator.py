@@ -57,6 +57,50 @@ class BatchCoordinator:
         with open(self.manifest_file, 'r') as f:
             return json.load(f)
 
+    def load_manifest_safe(self) -> Optional[Dict]:
+        """
+        Cargar manifiesto de batches de forma segura.
+
+        Returns:
+            Diccionario del manifiesto o None si no se puede cargar
+        """
+        try:
+            return self.load_manifest()
+        except FileNotFoundError as e:
+            logger.warning(f"Manifiesto no encontrado: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Error cargando manifiesto: {e}")
+            return None
+
+    def wait_for_manifest(self, max_wait_seconds: int = 300, check_interval: int = 10) -> Optional[Dict]:
+        """
+        Esperar a que el manifiesto esté disponible.
+
+        Args:
+            max_wait_seconds: Tiempo máximo a esperar en segundos
+            check_interval: Intervalo entre verificaciones en segundos
+
+        Returns:
+            Diccionario del manifiesto o None si no se encuentra en el tiempo límite
+        """
+        import time
+
+        start_time = time.time()
+        logger.info(f"Esperando manifiesto (máximo {max_wait_seconds}s)...")
+
+        while time.time() - start_time < max_wait_seconds:
+            manifest = self.load_manifest_safe()
+            if manifest is not None:
+                logger.info("✅ Manifiesto encontrado")
+                return manifest
+
+            logger.info(f"⏳ Manifiesto no disponible, esperando {check_interval}s...")
+            time.sleep(check_interval)
+
+        logger.error(f"❌ Manifiesto no encontrado después de {max_wait_seconds}s")
+        return None
+
     def save_manifest(self, manifest: Dict) -> None:
         """Guardar manifiesto de batches."""
         with open(self.manifest_file, 'w') as f:
@@ -69,7 +113,11 @@ class BatchCoordinator:
         Returns:
             Lista de batch_ids que fueron liberados
         """
-        manifest = self.load_manifest()
+        manifest = self.load_manifest_safe()
+        if manifest is None:
+            logger.warning("No se puede limpiar locks expirados: manifiesto no disponible")
+            return []
+
         now = datetime.now()
         freed_batches = []
 
@@ -124,7 +172,11 @@ class BatchCoordinator:
         # Limpiar locks expirados primero
         self.cleanup_expired_locks()
 
-        manifest = self.load_manifest()
+        manifest = self.load_manifest_safe()
+        if manifest is None:
+            logger.warning("No se puede claim batch: manifiesto no disponible")
+            return None
+
         now = datetime.now().isoformat()
 
         # Buscar batch disponible

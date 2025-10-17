@@ -125,23 +125,42 @@ class DistributedWorker:
                     break
 
                 # Intentar claim un batch
-                batch = self.coordinator.claim_batch(self.worker_id)
+                try:
+                    self.logger.debug(f"🔍 Intentando claim batch...")
+                    batch = self.coordinator.claim_batch(self.worker_id)
 
-                if batch:
-                    self.logger.info(f"📦 Procesando batch: {batch['batch_id']}")
-                    success = self._process_batch(batch)
+                    if batch:
+                        self.logger.info(f"📦 Batch claimado: {batch['batch_id']} (fitness: {batch['fitness_type']})")
+                        success = self._process_batch(batch)
 
-                    if success:
-                        self.stats['batches_processed'] += 1
-                        self.stats['last_batch_time'] = time.time()
-                        self.logger.info(f"✅ Batch {batch['batch_id']} completado exitosamente")
+                        if success:
+                            self.stats['batches_processed'] += 1
+                            self.stats['last_batch_time'] = time.time()
+                            self.logger.info(f"✅ Batch {batch['batch_id']} completado exitosamente")
+                        else:
+                            self.stats['errors'] += 1
+                            self.logger.error(f"❌ Batch {batch['batch_id']} falló")
                     else:
-                        self.stats['errors'] += 1
-                        self.logger.error(f"❌ Batch {batch['batch_id']} falló")
-                else:
-                    # No hay batches disponibles, esperar
-                    self.logger.info(f"⏳ No hay batches disponibles, esperando {sleep_seconds}s...")
+                        # No hay batches disponibles, mostrar estadísticas y esperar
+                        self.logger.info(f"⏳ No hay batches disponibles")
+                        self._show_progress_summary()
+                        self.logger.info(f"⏳ Esperando {sleep_seconds}s antes de reintentar...")
+                        time.sleep(sleep_seconds)
+
+                except Exception as e:
+                    self.logger.error(f"❌ Error obteniendo batch: {e}")
+                    self.stats['errors'] += 1
+
+                    # Si es error de manifiesto, intentar esperar a que se recupere
+                    if "Manifiesto no encontrado" in str(e):
+                        self.logger.info("🔄 Intentando esperar a que se recupere el manifiesto...")
+                        manifest = self.coordinator.wait_for_manifest(max_wait_seconds=60, check_interval=5)
+                        if manifest is None:
+                            self.logger.warning("⚠️ Manifiesto no se recuperó, continuando con espera normal...")
+
+                    self.logger.info(f"⏳ Esperando {sleep_seconds}s antes de reintentar...")
                     time.sleep(sleep_seconds)
+                    continue
 
                 # Mostrar estadísticas cada 10 batches
                 if self.stats['batches_processed'] % 10 == 0:
@@ -407,6 +426,27 @@ class DistributedWorker:
         self.logger.info(f"   Errores: {self.stats['errors']}")
         self.logger.info(f"   Tiempo transcurrido: {elapsed_time/3600:.1f} horas")
         self.logger.info(f"   Tareas/hora: {tasks_per_hour:.1f}")
+
+    def _show_progress_summary(self) -> None:
+        """Mostrar resumen de progreso general."""
+        try:
+            stats = self.coordinator.get_progress_stats()
+
+            self.logger.info(f"📊 Progreso General:")
+            self.logger.info(f"   Total batches: {stats['total_batches']}")
+            self.logger.info(f"   Disponibles: {stats['available']}")
+            self.logger.info(f"   En progreso: {stats['locked']}")
+            self.logger.info(f"   Completados: {stats['completed']}")
+            self.logger.info(f"   Fallidos: {stats['failed']}")
+            self.logger.info(f"   Workers activos: {stats['workers_active']}")
+            self.logger.info(f"   Tareas generadas: {stats['total_tasks_generated']}")
+
+            if stats['total_batches'] > 0:
+                completion_pct = (stats['completed'] / stats['total_batches']) * 100
+                self.logger.info(f"   Progreso: {completion_pct:.1f}%")
+
+        except Exception as e:
+            self.logger.warning(f"⚠️ Error obteniendo estadísticas: {e}")
 
     def _log_final_stats(self) -> None:
         """Mostrar estadísticas finales del worker."""

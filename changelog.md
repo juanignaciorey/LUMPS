@@ -7,6 +7,27 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Fixed
+- **Manejo resiliente de errores de manifiesto** en worker distribuido para evitar fallos fatales
+- **Recuperación automática** cuando se pierde el manifiesto durante la ejecución
+- **Reintentos inteligentes** en caso de errores temporales de coordinación
+- **Mejoras en logging** para mejor diagnóstico de problemas de sincronización
+- **Diagnóstico mejorado** del estado del worker para entender por qué se completa inmediatamente
+
+### Technical
+- Agregado método `load_manifest_safe()` en BatchCoordinator para carga segura del manifiesto
+- Implementado `wait_for_manifest()` para esperar recuperación del manifiesto
+- Mejorado manejo de excepciones en `claim_batch()` y `cleanup_expired_locks()`
+- Actualizado worker para manejar errores de manifiesto sin fallar completamente
+- Mejorado logging del worker con información detallada sobre claim de batches
+- Agregado método `_show_progress_summary()` para mostrar estadísticas en tiempo real
+
+### Documentation
+- Actualizado notebook de Colab con información sobre mejoras de resiliencia
+- Agregada documentación sobre recuperación automática de errores de manifiesto
+- Agregada celda de diagnóstico en notebook de Colab para verificar estado del sistema
+- Mejorada información de salida del worker para explicar por qué se completa
+
 ### Added
 - **Sistema distribuido completo para Google Colab** con coordinación de múltiples workers
 - **Sistema de locks basado en archivos JSON** para coordinar trabajo entre workers
